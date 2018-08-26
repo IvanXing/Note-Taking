@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body ng-app="myApp">
+
+<div ng-controller="MyController">
+  <input type="text" ng-model="empName">
+  <p>员工名:{{empName}}</p>
+</div>
+
+<div ng-controller="MyController1">
+  <input type="text" ng-model="empName">
+  <p>员工:{{empName}}</p>
+</div>
+
+
+<script type="text/javascript" src="../../js/angular-1.5.5/angular.js"></script>
+<script type="text/javascript">
+    //--------------1.---------------------
+    //创建模块对象
+    var myModule = angular.module('myApp', []);
+    //生成作用域对象
+    myModule.controller('MyController',function ($scope) {     //注入构造函数
+        $scope.empName = 'KobeBryant';
+    })
+    myModule.controller('MyController1',function ($scope) {
+        $scope.empName = 'JackMa';
+    })
+
+    //--------------2.---------------------
+    //优化 链式调用  ==> 隐式声明依赖注入
+    angular.module('myApp', [])
+      .controller('myController2',function($scope){    //返回值是模块对象，module继续调用下一步
+          $scope.empName = 'kobe';
+      })
+      .controller('myController3',function($scope){
+          $scope.empName = 'kobe';
+      })
+
+    //--------------3.---------------------
+    //js压缩代码后，形参会用abcd代替，也就是$scope会被abcd代替，导致angular无法解析
+    //解决方案 ==> 显示声明依赖注入
+    angular.module('myApp', [])
+        .controller('myController2',['$scope',function($scope){    //func和上面的一样
+            $scope.empName = 'kobe';
+        }])
+</script>
+</body>
+</html>
