@@ -13,4 +13,7 @@
 	* 在<html><body>中ng-app指令
 	* 定义ng-model='xxx'/{{xxx}}
 
-   
+3. MVC
+    * Model: 数据模型层
+    * View: 视图层，负责展示
+    * Controller: 业务逻辑和控制逻辑   
