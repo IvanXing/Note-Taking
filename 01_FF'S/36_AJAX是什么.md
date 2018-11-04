@@ -71,7 +71,7 @@ document.head.appendChild(script)
 * yyy GET 404 http/1.1
 * 用script可以发get请求，但是只能以脚本的形式运行
 
-> JSONP就是通过script请求一个脚本，运行脚本
+> JSONP就是通过script请求一个脚本，运行脚本，不能POST
 
 >有没有什么方式可以实现get、post、put、delete 请求都行,想以什么形式展示就以什么形式展示
 
@@ -127,13 +127,10 @@ myButton.addEventListener('click', (e)=>{
       console.log(request.status)
       if(request.status >= 200 && request.status < 300){
         console.log('说明请求成功')
-        console.log(typeof request.responseText)    //成功的响应
-        console.log(request.responseText)
-        let string = request.responseText
-        // 把符合 JSON 语法的字符串
-        // 转换成 JS 对应的值
-        let object = window.JSON.parse(string) 
-        // JSON.parse 是浏览器提供的
+        console.log(typeof request.responseText)  //成功的响应
+        console.log(request.responseText)         //返回的json串
+        let string = request.responseText        // 把符合JSON语法的字符串， 转换成JS对应的值
+        let object = window.JSON.parse(string)   // JSON.parse 是浏览器提供的
         console.log(typeof object)
         console.log(object)
         console.log('object.note')
@@ -149,12 +146,13 @@ myButton.addEventListener('click', (e)=>{
 
 ``` 
 ```
-// 后端代码
+  //后端代码
   }else if(path==='/xxx'){
     response.statusCode = 200
     response.setHeader('Content-Type', 'text/json;charset=utf-8')
     response.setHeader('Access-Control-Allow-Origin', 'http://deyunshe.com:8001')
-    response.write(`
+    response.write(
+      `
     {
       "note":{
         "to": "郭德纲",
@@ -163,9 +161,40 @@ myButton.addEventListener('click', (e)=>{
         "content": "吃啥"
       }
     }
-    `)
+    `                           //返回符合JSON对象语法的字符串
+    )
     response.end()
 ```   
+
+### 3.JSON
+* JSON没有function和undefined
+* JSON字符串首位必须是"
+
+### 4.同源策略
+
+* 只有协议+端口+域名一模一样才允许发AJAX请求。
+  * http://baidu.com的页面 不可以向 http://www.baidu.com 发 AJAX请求。
+  * http://baidu.com:80的页面 不可以向 http://baidu.com:81 发 AJAX请求。
+* 表单以及标签提交到另一个域名之后，因为刷新，原页面的脚本无法获取新页面的内容，所以浏览器认为这是安全的。
+* AJAX是可以读取相应内容的，因此浏览器不允许这样做，请求可以发出，只是拿不到响应。  
+
+#### 5.CORS跨域
+* Cross-Origin Resource Sharing
+* response.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
+* response.setHeader('Content-Type', 'text/json; charset=utf-8')
+
+#### 6.AJAX的所有功能
+* 客户端的JS发起请求（浏览器上的）
+* 服务端的JS发送响应（Node.js上的）
+* JS 可以设置任意请求 header 吗
+  * 第一部分 request.open('get', '/xxx')
+  * 第二部分 request.setRequestHeader('content-type','x-www-form-urlencoded')
+  * 第四部分 request.send('a=1&b=2')
+* JS 可以获取任意响应 header 吗？
+  * 第一部分 request.status / request.statusText
+  * 第二部分 request.getResponseHeader() / request.getAllResponseHeaders()
+  * 第四部分 request.responseText
+
 
 
 
