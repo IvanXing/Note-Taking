@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 如果网站没有referer 会导致发送任何资源都不会带referer -->
+    <!-- <meta name="referrer" content="never"> -->
+</head>
+<body>
+    <!-- 如果图片直接打开是不会增加referer的 -->
+    <!-- 我们应该进行校验 如果引用我的人 和我的域不是同一个 应该返回错误图片 -->
+    <img src="http://a.zf.cn:3000/1.jpg"/>
+</body>
+</html>
+
+
+
+<!-- file 是没有refer  http开头的才用 -->

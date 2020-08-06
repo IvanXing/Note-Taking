@@ -1,0 +1,1 @@
+## mvc model (数据)  view (视图 html)  controller (控制器)

@@ -1,0 +1,20 @@
+{
+  "name": "2020jiagou-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "commander": "^5.1.0",
+    "es6-promise": "^4.2.8",
+    "koa-session": "^6.0.0",
+    "mime": "^2.4.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "https://gitee.com/jw-speed/jiagouke_node.git",
+  "keywords": [],
+  "author": "Your Name <you@example.com>",
+  "license": "ISC"
+}
