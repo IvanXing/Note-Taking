@@ -39,14 +39,14 @@ const currying = (fn, arr = []) => {
     let len = fn.length; // 这里获取的是函数的参数的个数
     return function(...args) { // 高阶函数
         let concatValue = [...arr, ...args];  // 累加参数=>扩展运算符
-        if (a.length < len) {
+        if (concatValue.length < len) {
             return currying(fn, concatValue); // 递归不停的产生函数
         } else {
             return fn(...concatValue); // 执行isType函数
         }
     }
 }
-// 包装
+// 包装，先绑定Array和String，传递别的参数即可
 let isArray = currying(isType)('Array') // bind
 let isString = currying(isType)('String')
 // 调用
