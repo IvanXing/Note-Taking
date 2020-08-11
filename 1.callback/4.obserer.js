@@ -1,36 +1,42 @@
-//  观察者模式 有观察者 肯定有被观察者  观察者需要放到被观察者中，被观察者的状态发生变化需要通知观察者，我变化了
+// 观察者模式 有观察者 肯定有被观察者  
+// 观察者需要放到被观察者中，被观察者的状态发生变化需要通知观察者，我变化了
+// 内部也是基于发布订阅模式，被观察者收集(on)观察者，状态变化后要通知(emit)观察者
+// 是有关联的，基于发布订阅的
 
-// 内部也是基于发布订阅模式  收集观察者   状态变化后要通知观察者
+// 原型写法
+// function Subject(name){
+//     this.name = name;
+//     this.state = '开心的';
+//     this.observers = [];
+// }
+// Subject.prototype.attach = function (o) {
+//     this.observers.push(o);
+// }
+// Subject.prototype.setState = function (newState) {
+//     this.state = newState;
+//     this.observers.forEach(o=>o.update(this))
+// }
 
-function Subject(name){
-    this.name = name;
-    this.state = '开心的';
-    this.observers = [];
-}
-Subject.prototype.attach = function (o) {
-    this.observers.push(o);
-}
-Subject.prototype.setState = function (newState) {
-    this.state = newState;
-    this.observers.forEach(o=>o.update(this))
-}
-
-
-class Subject { // 被观察者  小宝宝
+// 被观察者  小宝宝，收集观察者
+class Subject { 
     constructor(name){
         this.name = name;
         this.state = '开心的';
         this.observers = []; // 存储所有观察者
     }
-    attach(o){ // Subject.prototype.attach 收集
+    // 收集一个个观察者，原型上的方法Subject.prototype.attach
+    attach(o){
         this.observers.push(o);
     }
+    // 通知观察者
     setState(newState){
         this.state = newState;
         this.observers.forEach(o=>o.update(this))
     }
 }
-class Observer{ // 观察者  我  我媳妇
+
+// 观察者  我  我媳妇 观察小宝宝的心理状态
+class Observer{ 
     constructor(name){
         this.name = name
     }
