@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./demo2.js -i ./data/"
+    "dev": "nodemon ./demo6.js -i ./data/"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "node-fetch": "^2.6.0",
     "nodemon": "^2.0.4"
   }
 }
