@@ -1,21 +1,21 @@
-// promise就是一个类 
-// 1.promise 有三个状态： 成功态（resolve） 失败态（reject） 等待态（pending） (又不成功又不失败)
-// 2.用户自己决定失败的原因和成功的原因  成功和失败也是用户定义的
-// 3.promise 默认执行器时立即执行
-// 4.promise的实例都拥有一个then方法 , 一个参数是成功的回调，另一个失败的回调
-// 5.如果执行函数时发生了异常也会执行失败逻辑
-// 6.如果promise一旦成功就不能失败 ， 反过来也是一样的 (只有等待态的时候才能去更改状态)
-console.log('my');
+
 const RESOLVED = 'RESOLVED'; // 成功
 const REJECTED = 'REJECTED'; // 失败
 const PENDING = 'PENDING'; // 等待态
 
-// resolvePromise 所有的promise都要坚持 bluebird q  es6-promise
+/*
+** resolvePromise 所有的promise都要兼容 bluebird库 q库 es6-promise库，库之间可以相互调用
+*/
 const resolvePromise = (promise2, x, resolve, reject) => {
-    // 1.循环引用 自己等待自己完成 错误的实现
-    if (promise2 === x) { // 用一个类型错误 结束掉promise
+
+    /*
+    **  1.循环引用 自己等待自己完成 错误的实现，没有调用成功失败，一直pending
+    **    规范规定报类型错误，用一个类型错误 结束掉promise
+    */
+    if (promise2 === x) {
         return reject(new TypeError('Chaining cycle detected for promise #<Promise>'))
     }
+
     // 后续的条件要严格判断 保证代码能和别的库一起使用
     let called;
     if ((typeof x === 'object' && x != null) || typeof x === 'function') { // 有可能是一个promise
@@ -45,6 +45,7 @@ const resolvePromise = (promise2, x, resolve, reject) => {
         resolve(x);
     }
 }
+
 class Promise {
     constructor(executor) {
         this.status = PENDING;
