@@ -18,10 +18,14 @@ const resolvePromise = (promise2, x, resolve, reject) => {
 
     // 后续的条件要严格判断 保证代码能和别的库一起使用
     let called;
-    if ((typeof x === 'object' && x != null) || typeof x === 'function') { // 有可能是一个promise
-        // 要继续判断
+    /* 
+    ** 规范规定：对象和函数才有可能是一个promise
+    ** 否则是普通值，直接成功
+    */
+    if ((typeof x === 'object' && x != null) || typeof x === 'function') { 
+        // 函数也不一定是promise，要继续判断
         try {
-            let then = x.then;
+            let then = x.then; // 规范：let then be x.then
             if (typeof then === 'function') { // 只能认为是一个promise了
                 // 不要写成x.then  直接then.call就可以了 因为x.then 会再次取值
                 then.call(x, y => { // 根据promise的状态决定是成功还是失败
@@ -33,7 +37,8 @@ const resolvePromise = (promise2, x, resolve, reject) => {
                     called = true;
                     reject(e); // 只要失败就失败
                 });
-            } else { // {then:'23'}
+            } else { 
+                // {then:'23'} 普通对象，普通值，直接resolve
                 resolve(x);
             }
         } catch (e) { // 防止失败了再次进入成功
@@ -42,6 +47,7 @@ const resolvePromise = (promise2, x, resolve, reject) => {
             reject(e); // 取值出错
         }
     } else {
+        // 否则是普通值，直接成功
         resolve(x);
     }
 }
