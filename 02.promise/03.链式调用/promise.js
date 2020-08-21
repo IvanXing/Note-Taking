@@ -1,22 +1,19 @@
-// promise就是一个类
-// 1.promise 有三个状态： 成功态（resolve） 失败态（reject） 等待态（pending） (又不成功又不失败)
-// 2.用户自己决定失败的原因和成功的原因  成功和失败也是用户定义的
-// 3.promise 默认执行器时立即执行
-// 4.promise的实例都拥有一个then方法 , 一个参数是成功的回调，另一个失败的回调
-// 5.如果执行函数时发生了异常也会执行失败逻辑
-// 6.如果promise一旦成功就不能失败 ， 反过来也是一样的 (只有等待态的时候才能去更改状态)
-console.log("my");
+/*
+** 拿到p1的返回结果，根据结果 操作p2，抽离方法处理 x 是promise or 普通值
+*/
 
 const RESOLVED = "RESOLVED"; // 成功
 const REJECTED = "REJECTED"; // 失败
 const PENDING = "PENDING"; // 等待态
 
-// 解析promise，处理promise2 x的关系
-// 注意promise2的异步生成，try catch的捕获位置
+/*
+** 解析promise，处理promise2 x的关系
+** 注意 promise2 不存在，调用时异步生成，加定时器
+** 外部try catch无法捕获异步代码，因为捕获时，异步代码还未执行完，在异步代码自身加 try catch
+*/
 const resolvePromise = (promise2, x, resolve, reject) => {
   console.log(promise2, x, resolve, reject);
 };
-
 
 class Promise {
   constructor(executor) {
@@ -55,29 +52,37 @@ class Promise {
 
   then(onFulfilled, onRejected) {
 
-    // 为了实现链式调用，返回promise，递归
+    /* 
+    ** 每次then都返回promise => 递归 promise2
+    ** promise2 是 new的过程中 生成的，但是过程中还用到了promise2
+    ** 加定时器，可以new完之后再执行 => 前端事件环
+    */
     let promise2 = new Promise((resolve, reject) => {
 
       if (this.status === RESOLVED) {
         // 定时器的作用是等待promise2 new完之后，才存在，否则undefined，传递入resolvePromise是undefined
-        // try catch无法捕获异步方法，放定时器里边
+        // 外部try catch无法捕获 未执行完的异步方法，try catch放自身部分中
         setTimeout(() => {
           try {
             let x = onFulfilled(this.value);
-            // 普通值处理 直接 resolve(x)
-            // resolve(x)
-            // 但是，x可能是一个proimise
-            // 决定promise2成功还是失败的是x，调用resolve或者reject
+            /*
+            ** 1. 普通值处理 直接 resolve(x)
+            ** resolve(x)
+            ** 2. 但是，x可能是一个proimise
+            ** 决定promise2成功还是失败的是x，用x去决定下一个then的成功或者失败
+            ** 传入promise2的resolve（成功）以及reject（失败）
+            */
+            //抽离 x非普通值 解析promise
             resolvePromise(promise2, x, resolve, reject);
           } catch (e) {
-            reject(e); // 捕获每一步的错误
+            reject(e); // 捕获 异步代码中 的错误
           }
         }, 0);
       }
       if (this.status === REJECTED) {
         setTimeout(() => {
           try {
-            let x = onRejected(this.reason);  // 失败返回普通值 也是传入下一个成功
+            let x = onRejected(this.reason);  // 上一个的失败返回普通值，也是传入下一个成功
             // resolve(x)
             resolvePromise(promise2, x, resolve, reject);
           } catch (e) {
