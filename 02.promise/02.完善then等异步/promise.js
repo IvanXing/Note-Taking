@@ -1,11 +1,7 @@
-// promise就是一个类 
-// 1.promise 有三个状态： 成功态（resolve） 失败态（reject） 等待态（pending） (又不成功又不失败)
-// 2.用户自己决定失败的原因和成功的原因  成功和失败也是用户定义的
-// 3.promise 默认执行器时立即执行
-// 4.promise的实例都拥有一个then方法 , 一个参数是成功的回调，另一个失败的回调
-// 5.如果执行函数时发生了异常也会执行失败逻辑
-// 6.如果promise一旦成功就不能失败 ， 反过来也是一样的 (只有等待态的时候才能去更改状态)
-console.log('my');
+/*
+** then中pending订阅，等resolve或者reject异步执行完成，发布
+*/
+
 const RESOLVED = 'RESOLVED'; // 成功
 const REJECTED = 'REJECTED'; // 失败
 const PENDING = 'PENDING'; // 等待态
@@ -17,7 +13,9 @@ class Promise {
         this.value = undefined;
         this.reason = undefined;
 
-        // then的执行需要考虑promise中的异步情况
+        /*
+        ** then的执行需要考虑promise中的异步情况, 以及可以多次分别then的情况
+        */
         this.onResolvedCallbacks = []; //  专门用来存放成功的回调
         this.onRejectedCallbacks = []; // 专门用来存放失败的回调
 
@@ -25,7 +23,7 @@ class Promise {
             if(this.status === PENDING){
                 this.value = value;
                 this.status = RESOLVED;
-                this.onResolvedCallbacks.forEach(fn=>fn());  // 执行成功才回调then中方法
+                this.onResolvedCallbacks.forEach(fn=>fn());  // 执行成功才回调then中方法，执行每一个函数
             }
         }
         let reject = (reason) => {
@@ -53,6 +51,10 @@ class Promise {
 
         // 异步pending等待
         if(this.status === PENDING){
+
+            // this.onResolvedCallbacks.push(onFulfilled(this.value)); // 这样是立即执行，push返回值，
+            // this.onResolvedCallbacks.push(onFulfilled); // 这样可以push函数，但是有加逻辑的需求，包裹函数AOP，
+
             this.onResolvedCallbacks.push(()=>{
                 // AOP切片 todo...新逻辑 与 公共逻辑 切片
                 onFulfilled(this.value);
