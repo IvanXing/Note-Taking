@@ -148,7 +148,11 @@ class Promise {
         return promise2;
     }
 }
+/*
+** 测试promise
+*/
 // promise的延迟对象
+// resolve 和 reject放到一个对象中
 Promise.defer = Promise.deferred = function () {
     let dfd = {};
     dfd.promise = new Promise((resolve,reject)=>{
@@ -158,7 +162,7 @@ Promise.defer = Promise.deferred = function () {
     return dfd
 }
 // npm install promises-aplus-test -g
-// promises-aplus-test promise.js
+// 运行 promises-aplus-test promise.js 进行测试
 module.exports = Promise
 
 
