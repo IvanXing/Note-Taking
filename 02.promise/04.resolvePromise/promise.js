@@ -90,8 +90,14 @@ class Promise {
     // 3.错误处理 如果离自己最近的then 没有错误处理(没有写错误函数) 会向下找
     // 4. 每次执行完promise.then方法后返回的都是一个“新的promise" (promisey一旦成功或者失败就不能修改状态)
     then(onFulfilled, onRejected) {
+
+        /*
+        ** 成功失败可选参数，值穿透的处理
+        */
+        // onFulfilled是不是函数，不是的话，穿透值，传入v返回v  (v)=>{return v}
         onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : v => v;
         onRejected = typeof onRejected === 'function' ? onRejected : err => { throw err };
+
         let promise2 = new Promise((resolve, reject) => { // 为了实现链式调用
             if (this.status === RESOLVED) {
                 setTimeout(() => {
