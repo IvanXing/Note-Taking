@@ -11,7 +11,7 @@ const resolvePromise = (promise2, x, resolve, reject) => {
     /*
     **  1.循环引用 自己等待自己完成 错误的实现，没有调用成功失败，一直pending
     **    规范规定报类型错误，用一个类型错误 结束掉promise
-    */
+    */ 
     if (promise2 === x) {
         return reject(new TypeError('Chaining cycle detected for promise #<Promise>'))
     }
@@ -21,14 +21,17 @@ const resolvePromise = (promise2, x, resolve, reject) => {
     /* 
     ** 规范规定：对象和函数才有可能是一个promise
     ** 否则是普通值，直接成功
+    ** null也是一个对象，排除此种 typeof null
     */
     if ((typeof x === 'object' && x != null) || typeof x === 'function') { 
         // 函数也不一定是promise，要继续判断
-        try {
+        try {  // 取值可能会报错，捕获异常，看最下面例子
             let then = x.then; // 规范：let then be x.then
             if (typeof then === 'function') { // 只能认为是一个promise了
-                // 不要写成x.then  直接then.call就可以了 因为x.then 会再次取值
-                then.call(x, y => { // 根据promise的状态决定是成功还是失败
+                // 不要写成x.then（x调用then，then的this就是x）  直接then.call就可以了 因为x.then 会再次取值，兼容别人写的promise不一定
+                // x传this，y是成功参数，e失败参数
+                // 根据promise的状态决定是成功y还是失败e
+                then.call(x, y => { 
                     if (called) return;
                     called = true;
                     resolvePromise(promise2, y, resolve, reject); // 递归解析的过程
@@ -38,7 +41,7 @@ const resolvePromise = (promise2, x, resolve, reject) => {
                     reject(e); // 只要失败就失败
                 });
             } else { 
-                // {then:'23'} 普通对象，普通值，直接resolve
+                // {then:'23'} 普通对象，普通值，直接resolve，不是函数
                 resolve(x);
             }
         } catch (e) { // 防止失败了再次进入成功
@@ -47,7 +50,7 @@ const resolvePromise = (promise2, x, resolve, reject) => {
             reject(e); // 取值出错
         }
     } else {
-        // 否则是普通值，直接成功
+        // 不是函数，或者对象，那就是普通值，直接成功
         resolve(x);
     }
 }
@@ -149,3 +152,13 @@ Promise.defer = Promise.deferred = function () {
 // npm install promises-aplus-test -g
 // promises-aplus-test promise.js
 module.exports = Promise
+
+
+
+
+// 别人定义的promise，一取then时候就报错
+// Object.defineProperty(x, 'then', {
+//     get() {
+//         throw new Error();
+//     }
+// })
