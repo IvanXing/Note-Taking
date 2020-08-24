@@ -1,11 +1,4 @@
-// promise就是一个类 
-// 1.promise 有三个状态： 成功态（resolve） 失败态（reject） 等待态（pending） (又不成功又不失败)
-// 2.用户自己决定失败的原因和成功的原因  成功和失败也是用户定义的
-// 3.promise 默认执行器时立即执行
-// 4.promise的实例都拥有一个then方法 , 一个参数是成功的回调，另一个失败的回调
-// 5.如果执行函数时发生了异常也会执行失败逻辑
-// 6.如果promise一旦成功就不能失败 ， 反过来也是一样的 (只有等待态的时候才能去更改状态)
-console.log('my');
+
 const RESOLVED = 'RESOLVED'; // 成功
 const REJECTED = 'REJECTED'; // 失败
 const PENDING = 'PENDING'; // 等待态
@@ -134,6 +127,9 @@ class Promise {
         });
         return promise2;
     }
+    /*
+    ** catch的实现，catch就是then，没有成功的失败函数
+    */
     catch(errCallback){
         return this.then(null,errCallback)
     }
