@@ -46,7 +46,9 @@ class Promise {
         this.onResolvedCallbacks = []; //  专门用来存放成功的回调
         this.onRejectedCallbacks = []; // 专门用来存放失败的回调
         let resolve = (value) => { // 调用此方法就是成功
-
+            /*
+            ** 当前值是promise的实例，就调用then，返回的是promise继续解析，直到普通值
+            */
             if(value instanceof Promise){
                 return value.then(resolve,reject); // 递归解析resolve中的参数,直到这个值是普通值
             }
@@ -133,6 +135,9 @@ class Promise {
     catch(errCallback){
         return this.then(null,errCallback)
     }
+    /*
+    ** 类上的两个静态方法
+    */
     static resolve(data){
         return new Promise((resolve,reject)=>{
             resolve(data);
