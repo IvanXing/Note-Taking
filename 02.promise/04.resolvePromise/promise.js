@@ -17,6 +17,7 @@ const resolvePromise = (promise2, x, resolve, reject) => {
     }
 
     // 后续的条件要严格判断 保证代码能和别的库一起使用
+    // called的作用是在下方判断，成功或者失败只能走一个，初始化定义为undefined
     let called;
     /* 
     ** 规范规定：对象和函数才有可能是一个promise
@@ -31,6 +32,7 @@ const resolvePromise = (promise2, x, resolve, reject) => {
                 // 不要写成x.then（x调用then，then的this就是x）  直接then.call就可以了 因为x.then 会再次取值，兼容别人写的promise不一定
                 // x传this，y是成功参数，e失败参数
                 // 根据promise的状态决定是成功y还是失败e
+                // 根据 called 判断只能走一个
                 then.call(x, y => { 
                     if (called) return;
                     called = true;
@@ -44,8 +46,8 @@ const resolvePromise = (promise2, x, resolve, reject) => {
                 // {then:'23'} 普通对象，普通值，直接resolve，不是函数
                 resolve(x);
             }
-        } catch (e) { // 防止失败了再次进入成功
-            if (called) return;
+        } catch (e) { 
+            if (called) return; // called防止失败了再次进入成功
             called = true;
             reject(e); // 取值出错
         }
