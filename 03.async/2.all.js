@@ -1,4 +1,6 @@
-// promise 可以解决的问题 1.回调嵌套的问题 .then.then   2.可以同步多个异步请求的结果
+// promise 可以解决的问题 
+// 1.回调嵌套的问题 .then.then，把嵌套扁平化
+// 2.可以同步多个异步请求的结果，多个异步并发
 
 const fs = require('fs').promises
 
