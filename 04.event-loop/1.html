@@ -7,6 +7,9 @@
 </head>
 <body>
     <script>
+        /*
+        ** 第一种情况
+        */
         document.body.style.background = 'green';
         console.log(1);
         Promise.resolve().then(()=>{
@@ -15,6 +18,42 @@
         });
         console.log(3);
         // 1 3 2 
+        // 绿色，1，3， promise放到微任务队列中，2，红色，   此时才，页面渲染，所以不会有绿色闪过
+
+        /*
+        ** 第二种情况
+        */
+        // setTimeout是宏任务，先渲染成绿色，执行宏任务再渲染成红色，由绿变红
+        document.body.style.background = 'green';
+        console.log(1);
+        setTimeout(()=>{
+            document.body.style.background = 'red';
+        });
+        console.log(3);
+
+        /*
+        ** 第三种情况
+        */
+        // promise防入微任务队列，下面的setTimeout先放入宏任务队列
+        // promise执行，打印promise1, 第一个setTimeout放入宏任务队列，渲染
+        // 取出宏任务队列里下面的setTimeout执行，打印setTimeout1，promise进入微任务，执行清空，打印promise2，渲染
+        // 执行下一个宏任务，输出setTimeout2
+
+        // 如果宏任务队列中n个计时器，取最快到的取出执行
+        
+        Promise.resolve().then(()=> {
+            console.log('promise1');
+            setTimeout(()=>{
+                console.log('setTimeout2');
+            }, 0);
+        })
+        setTimeout(()=>{
+            console.log('setTimeout1');
+            Promise.resolve().then(()=> {
+                console.log('promise2');
+            })
+        }, 0);
+
     </script>
 </body>
 </html>
