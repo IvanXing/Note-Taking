@@ -7,7 +7,7 @@
 </head>
 <body>
     <div id="button">按钮</div>
-    <script>
+    <script> 
         button.addEventListener('click',()=>{
             console.log('listener1');
             Promise.resolve().then(()=>console.log('micro task1'))
@@ -16,9 +16,14 @@
             console.log('listener2');
             Promise.resolve().then(()=>console.log('micro task2'))
         })
+        // 1.自动调用，直接触发，立即执行, 直接触发click是同步，和事件环无关
         button.click();
-        //  click1() click2()
+        //  相当于 两个 click 都执行 click1() click2()
+        // 先执行同步代码  listener1， listener2
+        // 再执行微任务micro task1， micro task2
 
+        // 2.手动点击，事件环，两个点击宏任务先后分别执行
+        // listener1, micro task1, listener2, micro task2
        
 </script>
 </body>
