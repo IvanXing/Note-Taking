@@ -35,9 +35,9 @@ const renderFile = (filePath, obj, cb) =>{  // 参数：文件路径，数据，
 
         html = html.replace(/\{\{([^}]+)\}\}/g, function () { // RegExp.$1
 
-            // arguments[0] 就是匹配到的原字符串 arguments[1] 就是第一个括号
+            // arguments[0] 就是匹配到的原字符串 arguments[1] 就是第一个圆括号，arguments[2] 就是第二个圆括号
             // arguments[1] 输出结果 name age
-            
+
             let key = arguments[1].trim();  // 去掉头尾空格
             return obj[key]; // 返回值
             // return '${'+key+'}'  // {{name}} => ${name}  
