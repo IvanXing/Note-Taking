@@ -51,9 +51,15 @@ console.log(fn.toString())
 
 /*
 ** 模板引擎的实现原理 with语法 + 字符串拼接 + new Function来实现
+** 2.template.js  test.js
 */
 
-const vm = require('vm'); // 虚拟机模块 可以创建沙箱环境
-vm.runInThisContext(`console.log(a)`);
+
+/*
+** 虚拟机模块 可以创建沙箱环境
+*/
+const vm = require('vm'); 
+vm.runInThisContext(`console.log(a)`); // a undefined 并没有向上查找，是一个干净的环境
+// 和eval非常像，但是不会查找上级作用域
 
 

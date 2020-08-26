@@ -1,5 +1,5 @@
 /*
-** 实现自定义的模板引擎 
+** 实现自定义的模板引擎 ：字符串替换拼接，with圈定作用域，new Function执行
 /
 
 /*
@@ -7,7 +7,7 @@
 */
 // const ejs = require('ejs'); // 第三方模块 npm install ejs
 // const path = require('path');
-// ejs.renderFile(path.resolve(__dirname,'template.html'),{name:'paul',age:11,arr:[1,2,3]},(err,data)=>{
+// ejs.renderFile(path.resolve(__dirname,'3.template.html'),{name:'paul',age:11,arr:[1,2,3]},(err,data)=>{
 //     console.log(data); // 输出替换值的html
 // })
 
@@ -39,21 +39,36 @@ const renderFile = (filePath, obj, cb) =>{  // 参数：文件路径，数据，
             // arguments[1] 输出结果 name age
 
             let key = arguments[1].trim();  // 去掉头尾空格
-            return obj[key]; // 返回值
-            // return '${'+key+'}'  // {{name}} => ${name}  
+            // return obj[key]; // 返回值
+            return '${'+key+'}'  // {{name}} => ${name}  
         });
-        // let head = `let str = '';\r\n with(obj){\r\n`;
-        // head += 'str+=`'
-        // html = html.replace(/\{\%([^%]+)\%\}/g,function () {
-        //     return '`\r\n'+arguments[1] + '\r\nstr+=`\r\n'
-        // })
-        // let tail = '`}\r\n return str;'
-        // let fn = new Function('obj',head + html + tail)
-        // cb(err,fn(obj));
-        cb(err, html);
+
+        /*
+        ** 构造test.js文件中的执行思路
+        */
+        let head = `let str = '';\r\n with(obj){\r\n`;
+        head += 'str+=`'
+
+        // 解析 {% arr.forEach(item=>{ %}
+        // 1. /{% ( [^%] ) %}/ => ()表示解析对象，[^%]，里面非%，+表示n个字符
+        // 2. 两个大括号要转义，前后加\
+
+        html = html.replace(/\{\%([^%]+)\%\}/g, function () {
+            // arguments[1] 就是解析完的部分
+            return '`\r\n' + arguments[1] + '\r\nstr+=`\r\n'
+        })
+        let tail = '`}\r\n return str;'
+        
+        // new Function 让字符串可以执行
+        let fn = new Function('obj',head + html + tail)
+
+        // 回调
+        cb(err,fn(obj));
+
+        // cb(err, html);
     });
 }
-renderFile(path.resolve(__dirname,'my-template.html'),{name:'zf',age:11,arr:[1,2,3]},function (err,data) {
+renderFile(path.resolve(__dirname,'4.my-template.html'),{name:'zf',age:11,arr:[1,2,3]},function (err,data) {
     console.log(data);
 });
 
