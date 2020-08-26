@@ -1,18 +1,22 @@
 // let r = require('./a');
 // console.log(this) // => {}
 // console.log(r);
-// const a = 1;
-// const b = 2;
-// function sum(x,y){
-//     return x+y;
-// }
-// sum(a,b)
+const a = 1;
+const b = 2;
+function sum(x,y){
+    return x+y;
+}
+sum(a,b)
 
-// 1.掌握node中如何实现代码调试
+/*
+** 1. 掌握node中如何实现代码调试
+*/ 
 // https://nodejs.org/en/docs/inspector
-// 1.可以在浏览器中进行调试 （调试某些模块可以使用这种方式） node --inspect-brk 文件名来解析
-// √ 2.直接使用webstorm 和 vscode 自带调试方式  直接通过launch.json 进行调试
-// 3.在控制台中调试 
+// 1.1.可以在浏览器中进行调试 （调试某些模块可以使用这种方式） node --inspect-brk 文件名来解析，打开浏览器，输入chrome://inspect，点击打开DevTools
+// 1.2.直接使用webstorm 和 vscode 自带调试方式  直接通过左边小三角，创建launch.json 进行调试
+// 1.3.在控制台中调试 
+
+
 
 // 分析node源码
 // 1.会默认调用require语法
