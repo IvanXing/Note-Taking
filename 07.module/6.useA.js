@@ -18,7 +18,10 @@ sum(a,b)
 
 
 
-// 分析node源码
+/*
+** 分析CommonJS的node源码
+*/
+
 // 1.会默认调用require语法
 // 2.Module.prototype.require 模块的原型上有require方法
 // 3.Module._load 调用模块的加载方法  最终返回的是module.exports
@@ -49,6 +52,10 @@ function Module(id) {
     this.exports = {};
 }
 
+/*
+** 13.将用户的内容 包裹到一个函数中  (function (exports, require, module, __filename, __dirname) {})
+** 把内容包装成函数，函数头 + 字符串体，返回字符串
+*/
 Module.wrap = function (script) {
     let arr = [
         ' (function (exports, require, module, __filename, __dirname) {',
@@ -60,19 +67,19 @@ Module.wrap = function (script) {
 
 /*
 ** 10.获取当前模块的扩展名  根据扩展名调用对应的方法Module._extensions 策略模式
-**     定义很多策略，根据不同策略加载JS
+**     定义很多策略（后缀），根据不同策略加载JS
 */
 Module._extensions = {
     '.js': function(module) {
         let content = fs.readFileSync(module.id,'utf8');
-        let fnStr = Module.wrap(content);
-        let fn = vm.runInThisContext(fnStr);
+        let fnStr = Module.wrap(content);  // 13.把内容包装成函数，返回一个函数字符串
+        let fn = vm.runInThisContext(fnStr);  // 产生一个函数
         let exports = module.exports;
         let require = myRequire;
         let __filename = module.id;
-        let __dirname = path.dirname(module.id);
+        let __dirname = path.dirname(module.id); // 当前文件目录
         // 这里的this 就是exports对象
-        fn.call(exports,exports,require,module,__filename,__dirname);
+        fn.call(exports, exports, require, module, __filename, __dirname);
         // 用户会给module.exports 赋值
     },
     '.json': function(module) {
@@ -119,7 +126,8 @@ Module.cache = {};
 ** 8.tryModuleLoad 尝试加载模块   module.load
 */
 Module._load = function(filepath) {
-    let filename = Module._resolveFilename(filepath);  // 4.将路径转化成绝对路径
+    // 4.将路径转化成绝对路径
+    let filename = Module._resolveFilename(filepath);  
     // 5.获取路径后不要立即创建模块，先看一眼能否找到以前加载过的模块
     let cacheModule = Module.cache[filename];
     console.log(cacheModule);
@@ -128,7 +136,7 @@ Module._load = function(filepath) {
     }
     // 保证每个模块的唯一性，需要通过唯一路径进行查找
     // 6.创建新对象
-    let module = new Module(filename); // id,exports对应的就是当前模块的结果
+    let module = new Module(filename); // 实例中有id, exports对应的就是当前模块的结果
     Module.cache[filename] = module
     // 8. module.load方法
     module.load(filename);
@@ -142,13 +150,12 @@ Module._load = function(filepath) {
 function myRequire(filepath) {
     return Module._load(filepath)   // 根据路径加载这个模块
 }
-// myRequire = require
 
 /* 
 ** 1.会默认调用require语法
 */
 setInterval(() => {
-    let r = myRequire('./a.js');  
+    let r = myRequire('./a.js');  // myRequire = require 自己实现的
     console.log(r,'----');
 }, 1000);
 
