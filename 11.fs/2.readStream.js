@@ -9,6 +9,10 @@ const ReadStream = require('./readStream');
 // 创建一个可读流(可读流对象)  这个方法默认并不会读取内容
 // 内部的实现原理：还是fs.open  fs.read  fs.close，进行了封装
 // let rs = fs.createReadStream()
+
+/*
+3中实现此方法
+*/
 let rs = new ReadStream( path.resolve(__dirname, 'name.txt'), {
     flags: 'r', // r 代表的是读取
     encoding: null, // 默认buffer编码

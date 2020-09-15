@@ -3,7 +3,8 @@ const fs = require('fs');
 class ReadStream extends EventEmitter {
     constructor(path, opts = {}) {
         super()
-        this.path = path;
+        // 所有属性都放到实例上
+        this.path = path;  
         this.flags = opts.flags || 'r';
         this.mode = opts.mode || 0o666;
         this.autoClose = opts.autoClose || true;
@@ -12,11 +13,15 @@ class ReadStream extends EventEmitter {
         // 读取的数量默认是64k  如果文件大于64k 就可以采用流的方式
         this.highWaterMark = opts.highWaterMark || 64 * 1024;
 
-        // 记录读取的偏移量
+        // 记录读取的偏移量（读取的位置）
         this.pos = this.start;
+
         // 默认创建一个可读流 是非流动模式 不会触发data事件,如果用户监听了data事件后 需要变为流动模式
         this.flowing = false; // 是否是流动模式
-        this.open(); // 打开文件  fs.open
+
+        this.open(); // 打开文件  fs.open 以备读取
+
+        // newListener 是继承自 EventEmitter
         this.on('newListener', (type) => {
             if (type === 'data') {
                 // 用户监听了data
