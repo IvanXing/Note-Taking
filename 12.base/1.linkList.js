@@ -1,3 +1,7 @@
+/*
+** 链表的反转
+*/
+
 class Node { // 节点类
     constructor(element, next) {
         this.element = element; // 存放的数据
@@ -33,10 +37,14 @@ class LinkedList {
         }
         return current;
     }
+    /*
+    ** 递归反转链表
+    */
     reverseLinkList1() {
         const reverse = (head) => {
-            // 有停止条件 如果没有元素 或者后面没元素了 就不在反转了
+            // 递归停止条件=> 如果没有元素 或者后面没元素了 就不在反转了
             if (head === null || head.next === null) return head;
+             // 递归两两反转
             let newHead = reverse(head.next);
             head.next.next = head;
             head.next = null;
@@ -46,10 +54,15 @@ class LinkedList {
         return this.head;
         // 最终返回反转后的结果
     }
+    /*
+    ** 非递归反转链表
+    ** head->A->B->C->D
+    ** 创建一个newHead，把A指向null，newhead指向A，B指向A，head指向B...
+    */
     reverseLinkList2() {
         let head = this.head; // 获取原来的第一个元素
         if (head === null || head.next === null) return head; // 处理临界条件
-        let newHead = null;
+        let newHead = null; // 创建一个新头
         while (head != null) {
             let temp = head.next; // 先保留B
             head.next = newHead; // A => null;
